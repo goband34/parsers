@@ -1,0 +1,26 @@
+open Containers
+
+type redux_item =
+  | Terminal of string
+  | NonTerminal of string
+  | EndOfInput
+type redux = redux_item list
+type reduction_rule = string * redux
+type grammar = reduction_rule list 
+
+(* E -> x . y *)
+(* can iterate over keys for lhs, and the values are rhs + marker *)
+type item_set = (string, redux) Hashtbl.t 
+module StringSet = CCHashSet.Make(String)
+
+let closure item_set =
+  let remembered_symbols = StringSet.create 10 in
+  let changed = ref false in
+  let rec go () =
+    Hashtbl.iter (fun k v ->
+        match StringSet.find remembered_symbols k with
+        | None -> ()
+        | Some _ -> changed := true
+      ) item_set;
+    match !changed with
+    | false -> 

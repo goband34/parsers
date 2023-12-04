@@ -1,0 +1,4 @@
+(executable
+ (public_name parsers)
+ (name main)
+ (libraries parsers))
